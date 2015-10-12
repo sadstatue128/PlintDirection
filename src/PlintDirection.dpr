@@ -1,15 +1,19 @@
 program PlintDirection;
 
 uses
-  Vcl.Forms,
-  fmMain in 'fmMain.pas' {Main},
-  PlintDef in 'PlintDef.pas';
+  Forms,
+  PlintDef in 'PlintDef.pas',
+  uStructure in 'uStructure.pas' {frmStructure: TFrame},
+  uDM in 'uDM.pas' {DM: TDataModule},
+  uMain in 'uMain.pas' {fmMain},
+  uPlintDirection in 'uPlintDirection.pas' {Frame3: TFrame};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TMain, Main);
+  Application.CreateForm(TDM, DM);
+  Application.CreateForm(TfmMain, fmMain);
   Application.Run;
 end.
