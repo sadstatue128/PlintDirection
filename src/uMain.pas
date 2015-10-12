@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  uStructure, uPlintDirection, PlintDef;
+  uStructure, uPlintDirection, PlintDef, DirectionDef, uAddPlintDir;
 
 const
   ERROR_NODE_COUNT = '"%s"';
@@ -26,6 +26,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure edNodeCountEnter(Sender: TObject);
     procedure btClearAllClick(Sender: TObject);
+    procedure edNodeCountKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure frmPlintDirection1btAddClick(Sender: TObject);
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
@@ -62,9 +65,9 @@ procedure TfmMain.ClearAll;
 begin
   fCurRecord := nil;
   frmPlintDirection1.Visible := false;
-  lblInfo.Caption := EmptyStr;
   ClearStruct;
   ClearMainCtrls;
+  lblInfo.Caption := '';
 end;
 
 {$Region 'Кнопки создания структуры'}
@@ -108,6 +111,13 @@ procedure TfmMain.edNodeCountEnter(Sender: TObject);
 begin
   if edNodeCount.Enabled = true then
     edNodeCount.Text := EmptyStr;
+end;
+
+procedure TfmMain.edNodeCountKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    btCreateNodesClick(btCreateNodes);
 end;
 
 procedure TfmMain.ClearMainCtrls;
@@ -186,5 +196,23 @@ begin
 end;
 
 {$Endregion}
- 
+
+{$Region 'Редактирование плинтонаправлений'}
+
+procedure TfmMain.frmPlintDirection1btAddClick(Sender: TObject);
+var
+  Lfm: TfmAddPlintDir;
+  ModRes: Integer;
+begin
+  Lfm := TfmAddPlintDir.Create(Self);
+  try
+    ModRes := Lfm.ShowModal;
+    if ModRes = mrOK then
+      frmPlintDirection1.Refresh;
+  finally
+    Lfm.Free;
+  end;
+end;
+
+{$Endregion}
 end.

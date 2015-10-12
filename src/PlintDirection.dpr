@@ -6,7 +6,9 @@ uses
   uStructure in 'uStructure.pas' {frmStructure: TFrame},
   uDM in 'uDM.pas' {DM: TDataModule},
   uMain in 'uMain.pas' {fmMain},
-  uPlintDirection in 'uPlintDirection.pas' {frmPlintDirection: TFrame};
+  uPlintDirection in 'uPlintDirection.pas' {frmPlintDirection: TFrame},
+  DirectionDef in 'DirectionDef.pas',
+  uAddPlintDir in 'uAddPlintDir.pas' {fmAddPlintDir};
 
 {$R *.res}
 
@@ -15,5 +17,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TfmMain, fmMain);
+  Application.CreateForm(TfmAddPlintDir, fmAddPlintDir);
   Application.Run;
 end.

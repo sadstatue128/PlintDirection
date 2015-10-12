@@ -11,6 +11,7 @@ type
     grPlintDirections: TStringGrid;
     btAdd: TButton;
     btDelete: TButton;
+    lblPlintDir: TLabel;
   private
     fPlint: TPlint;
   public

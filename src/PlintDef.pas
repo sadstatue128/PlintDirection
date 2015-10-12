@@ -4,9 +4,15 @@ interface
 
 uses Classes, SysUtils, Contnrs, DB;
 
-type
+const
+  С_NODE = 'Узел';
+  С_CU = 'Коннектор';
+  С_PLINT = 'Плинт';
 
+type
 TChosenType = (chNode, chCU, chPlint);
+
+//базовый класс
 
 TRecord = class
   private
@@ -21,7 +27,7 @@ TRecordList = class(TObjectList)
   private
     function GetItemById (const AId: Integer): TRecord;
   public
-    property ItemsById [const Id: Integer]: TRecord read GetItemById;
+    property ItemsById [const Id: Integer]: TRecord read GetItemById; 
 end;
 
 TCUList = class;
@@ -55,8 +61,9 @@ TCU = class(TRecord)
   public
     constructor Create(aId: Integer; aNode: TNode);
     destructor Destroy;
-    property Plints: TPlintList read fPlints;
     function Info: String; override;
+    property Plints: TPlintList read fPlints;
+    property Node: TNode read fNode;
 end;
 
 TCUList = class(TRecordList)
@@ -71,9 +78,12 @@ end;
 TPlint = class(TRecord)
   private
     fCU: TCU;
+    function GetNode: TNode;
   public
     constructor Create(aId: Integer; aCU: TCU);
     function Info: String; override;
+    property CU: TCU read fCU;
+    property Node: TNode read GetNode;
 end;
 
 TPlintList = class(TRecordList)
@@ -111,7 +121,7 @@ end;
 
 function TNode.Info: String;
 begin
-  result := 'Node_' + IntToStr(Id);
+  result := С_NODE + ':' + IntToStr(Id);
 end;
 
 {$Endregion}
@@ -132,7 +142,7 @@ end;
 
 function TCU.Info: String;
 begin
-  result := fNode.Info + ' ' + 'CU_' + IntToStr(Id);
+  result := fNode.Info + ' ' + С_CU + ':' + IntToStr(Id);
 end;
 
 {$Endregion}
@@ -246,9 +256,14 @@ begin
   fCU := aCU;
 end;
 
+function TPlint.GetNode: TNode;
+begin
+  result := fCU.Node;
+end;
+
 function TPlint.Info: String;
 begin
-  result := fCU.Info + ' ' + 'Plint_' + IntToStr(Id);
+  result := fCU.Info + ' ' + С_PLINT + ':' + IntToStr(Id);
 end;
 
 {$Endregion}

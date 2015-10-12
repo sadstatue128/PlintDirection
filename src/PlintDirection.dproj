@@ -34,7 +34,11 @@
     <DelphiCompile Include="PlintDirection.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="DirectionDef.pas" />
     <DCCReference Include="PlintDef.pas" />
+    <DCCReference Include="uAddPlintDir.pas">
+      <Form>fmAddPlintDir</Form>
+    </DCCReference>
     <DCCReference Include="uDM.pas">
       <Form>DM</Form>
     </DCCReference>

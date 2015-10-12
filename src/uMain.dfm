@@ -33,7 +33,7 @@ object fmMain: TfmMain
     Width = 321
     Height = 626
     Align = alLeft
-    TabOrder = 0
+    TabOrder = 1
     ExplicitHeight = 758
     inline frmStructure1: TfrmStructure
       Left = 1
@@ -60,7 +60,7 @@ object fmMain: TfmMain
     Width = 75
     Height = 21
     Caption = #1057#1086#1079#1076#1072#1090#1100
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btCreateNodesClick
   end
   object edNodeCount: TEdit
@@ -74,9 +74,10 @@ object fmMain: TfmMain
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 0
     OnChange = edNodeCountChange
     OnEnter = edNodeCountEnter
+    OnKeyDown = edNodeCountKeyDown
   end
   object btClearAll: TButton
     Left = 557
@@ -105,6 +106,12 @@ object fmMain: TfmMain
       ExplicitTop = 1
       ExplicitWidth = 367
       ExplicitHeight = 240
+      inherited lblPlintDir: TLabel
+        Font.Charset = RUSSIAN_CHARSET
+      end
+      inherited btAdd: TButton
+        OnClick = frmPlintDirection1btAddClick
+      end
     end
   end
   object Panel2: TPanel
