@@ -42,7 +42,7 @@
       <Form>fmMain</Form>
     </DCCReference>
     <DCCReference Include="uPlintDirection.pas">
-      <Form>Frame3</Form>
+      <Form>frmPlintDirection</Form>
     </DCCReference>
     <DCCReference Include="uStructure.pas">
       <Form>frmStructure</Form>

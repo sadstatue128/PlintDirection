@@ -4,18 +4,34 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, 
-  Dialogs;
+  Dialogs, Grids, StdCtrls, PlintDef;
 
 type
-  TFrame3 = class(TFrame)
+  TfrmPlintDirection = class(TFrame)
+    grPlintDirections: TStringGrid;
+    btAdd: TButton;
+    btDelete: TButton;
   private
-    { Private declarations }
+    fPlint: TPlint;
   public
-    { Public declarations }
+    procedure Refresh;
+    procedure AssignPlint(aPlint: TPlint);
   end;
 
 implementation
 
 {$R *.dfm}
+
+{ TfrmPlintDirection }
+
+procedure TfrmPlintDirection.AssignPlint(aPlint: TPlint);
+begin
+  fPlint := aPlint;
+end;
+
+procedure TfrmPlintDirection.Refresh;
+begin
+
+end;
 
 end.

@@ -6,7 +6,7 @@ uses
   uStructure in 'uStructure.pas' {frmStructure: TFrame},
   uDM in 'uDM.pas' {DM: TDataModule},
   uMain in 'uMain.pas' {fmMain},
-  uPlintDirection in 'uPlintDirection.pas' {Frame3: TFrame};
+  uPlintDirection in 'uPlintDirection.pas' {frmPlintDirection: TFrame};
 
 {$R *.res}
 

@@ -2,8 +2,8 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = #1059#1087#1072#1082#1086#1074#1082#1072' '#1085#1072#1087#1088#1072#1074#1083#1077#1085#1080#1081
-  ClientHeight = 758
-  ClientWidth = 1062
+  ClientHeight = 626
+  ClientWidth = 750
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
@@ -15,18 +15,31 @@ object fmMain: TfmMain
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object lblInfo: TLabel
+    Left = 344
+    Top = 48
+    Width = 4
+    Height = 17
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clHotLight
+    Font.Height = -14
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object pnLeft: TPanel
     Left = 0
     Top = 0
     Width = 321
-    Height = 758
+    Height = 626
     Align = alLeft
     TabOrder = 0
+    ExplicitHeight = 758
     inline frmStructure1: TfrmStructure
       Left = 1
       Top = 1
       Width = 319
-      Height = 756
+      Height = 624
       Align = alClient
       TabOrder = 0
       ExplicitLeft = 1
@@ -35,7 +48,7 @@ object fmMain: TfmMain
       ExplicitHeight = 756
       inherited tvComStruct: TTreeView
         Width = 319
-        Height = 756
+        Height = 624
         ExplicitWidth = 319
         ExplicitHeight = 756
       end
@@ -74,19 +87,32 @@ object fmMain: TfmMain
     TabOrder = 3
     OnClick = btClearAllClick
   end
-  object Panel1: TPanel
+  object pnPlintDir: TPanel
     Left = 344
-    Top = 48
-    Width = 577
-    Height = 265
-    Caption = 'Panel1'
+    Top = 71
+    Width = 369
+    Height = 170
+    BevelOuter = bvLowered
     TabOrder = 4
+    inline frmPlintDirection1: TfrmPlintDirection
+      Left = 1
+      Top = 1
+      Width = 367
+      Height = 168
+      Align = alClient
+      TabOrder = 0
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 367
+      ExplicitHeight = 240
+    end
   end
   object Panel2: TPanel
     Left = 344
-    Top = 328
-    Width = 577
-    Height = 289
+    Top = 264
+    Width = 369
+    Height = 305
+    BevelOuter = bvLowered
     Caption = 'Panel2'
     TabOrder = 5
   end

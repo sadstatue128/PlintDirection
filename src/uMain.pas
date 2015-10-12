@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  uStructure;
+  uStructure, uPlintDirection, PlintDef;
 
 const
   ERROR_NODE_COUNT = '"%s"';
@@ -17,8 +17,10 @@ type
     btCreateNodes: TButton;
     edNodeCount: TEdit;
     btClearAll: TButton;
-    Panel1: TPanel;
+    pnPlintDir: TPanel;
     Panel2: TPanel;
+    lblInfo: TLabel;
+    frmPlintDirection1: TfrmPlintDirection;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -27,14 +29,17 @@ type
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
+    fCurRecord: TRecord;
     procedure ClearMainCtrls;
     procedure MainCtrlsBeforePlintCreation;
     procedure MainCtrlsAfterPlintCreate;
     function CheckNodeCounts: Boolean;
     procedure FillStruc;
     procedure ClearStruct;
-  public
-    { Public declarations }
+    procedure HandleSelectedData(aRecord: TRecord; aType: TChosenType);
+    procedure FillInfo;
+    procedure ClearAll;
+    procedure FillPlintDir;
   end;
 
 var
@@ -46,10 +51,27 @@ implementation
 
 uses uDM;
 
-procedure TfmMain.btClearAllClick(Sender: TObject);
+
+procedure TfmMain.FormCreate(Sender: TObject);
 begin
+  frmStructure1.ChangeEvent := HandleSelectedData;
+  ClearAll;
+end;
+
+procedure TfmMain.ClearAll;
+begin
+  fCurRecord := nil;
+  frmPlintDirection1.Visible := false;
+  lblInfo.Caption := EmptyStr;
   ClearStruct;
   ClearMainCtrls;
+end;
+
+{$Region 'Кнопки создания структуры'}
+
+procedure TfmMain.btClearAllClick(Sender: TObject);
+begin
+  ClearAll;
 end;
 
 procedure TfmMain.FillStruc;
@@ -86,11 +108,6 @@ procedure TfmMain.edNodeCountEnter(Sender: TObject);
 begin
   if edNodeCount.Enabled = true then
     edNodeCount.Text := EmptyStr;
-end;
-
-procedure TfmMain.FormCreate(Sender: TObject);
-begin
-  ClearMainCtrls;
 end;
 
 procedure TfmMain.ClearMainCtrls;
@@ -135,5 +152,39 @@ begin
   fNodeCount := N;
 end;
 
+{$Endregion}
 
+{$Region 'Перемещение по структуре'}
+
+procedure TfmMain.HandleSelectedData(aRecord: TRecord; aType: TChosenType);
+begin
+  fCurRecord := aRecord;
+  FillInfo;
+  FillPlintDir;
+end;
+
+procedure TfmMain.FillInfo;
+begin
+  if fCurRecord is TNode then
+    lblInfo.Caption := TNode(fCurRecord).Info
+  else if fCurRecord is TCU then
+    lblInfo.Caption := TCU(fCurRecord).Info
+  else if fCurRecord is TPlint then
+    lblInfo.Caption := TPlint(fCurRecord).Info   
+end;
+
+procedure TfmMain.FillPlintDir;
+begin
+  if fCurRecord is TPlint then
+  begin
+    frmPlintDirection1.AssignPlint(TPlint(fCurRecord));
+    frmPlintDirection1.Refresh;
+    frmPlintDirection1.Visible := true;    
+  end
+  else
+    frmPlintDirection1.Visible := false;
+end;
+
+{$Endregion}
+ 
 end.

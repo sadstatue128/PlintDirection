@@ -14,6 +14,7 @@ TRecord = class
   public
     property Id: Integer read fId;
     constructor Create(aId: Integer);
+    function Info: String; virtual; abstract;
 end;
 
 TRecordList = class(TObjectList)
@@ -32,6 +33,7 @@ TNode = class(TRecord)
     constructor Create(aId: Integer);
     destructor Destroy;
     property CUs: TCUList read fCUs;
+    function Info: String; override;
 end;
 
 TNodeList = class(TRecordList)
@@ -49,10 +51,12 @@ TPlintList = class;
 TCU = class(TRecord)
   private
     fPlints: TPlintList;
+    fNode: TNode;
   public
-    constructor Create(aId: Integer);
+    constructor Create(aId: Integer; aNode: TNode);
     destructor Destroy;
     property Plints: TPlintList read fPlints;
+    function Info: String; override;
 end;
 
 TCUList = class(TRecordList)
@@ -65,6 +69,11 @@ TCUList = class(TRecordList)
 end;
 
 TPlint = class(TRecord)
+  private
+    fCU: TCU;
+  public
+    constructor Create(aId: Integer; aCU: TCU);
+    function Info: String; override;
 end;
 
 TPlintList = class(TRecordList)
@@ -76,17 +85,18 @@ TPlintList = class(TRecordList)
     property ItemsById [const Id: Integer]: TPlint read GetItemById;
 end;
 
-
 implementation
 
-{ TRecord }
+{$Region 'TRecord' }
 
 constructor TRecord.Create(aId: Integer);
 begin
   fId := aId;
 end;
 
-{ TNode }
+{$Endregion}
+
+{$Region 'TNode' }
 
 constructor TNode.Create(aId: Integer);
 begin
@@ -99,12 +109,20 @@ begin
   fCUs.Free;
 end;
 
-{ TCU }
-
-constructor TCU.Create(aId: Integer);
+function TNode.Info: String;
 begin
-  inherited;
+  result := 'Node_' + IntToStr(Id);
+end;
+
+{$Endregion}
+
+{$Region 'TCU' }
+
+constructor TCU.Create(aId: Integer; aNode: TNode);
+begin
+  inherited Create(aId);
   fPlints := TPlintList.Create(true);
+  fNode := aNode;
 end;
 
 destructor TCU.Destroy;
@@ -112,7 +130,14 @@ begin
   fPlints.Free;
 end;
 
-{ TNodeList }
+function TCU.Info: String;
+begin
+  result := fNode.Info + ' ' + 'CU_' + IntToStr(Id);
+end;
+
+{$Endregion}
+
+{$Region 'TNodeList' }
 
 procedure TNodeList.FillRandomValues(aNodeCount: Integer);
 
@@ -124,7 +149,7 @@ begin
   PlintCount := 1 + Random(8);
   for i := 0 to PlintCount do
   begin
-    aCU.Plints.Add(TPlint.Create(i));
+    aCU.Plints.Add(TPlint.Create(i, aCU));
   end;
 end;
 
@@ -137,7 +162,7 @@ begin
   CUCount := 1 + Random(5);
   for i := 0 to CUCount do
   begin
-    LCU := TCU.Create(i);
+    LCU := TCU.Create(i, aNode);
     aNode.CUs.Add(LCU);
     FillCU(LCU);
   end;
@@ -166,7 +191,9 @@ begin
   result := TNode(inherited GetItemById(AId));
 end;
 
-{ TRecordList }
+{$Endregion}
+
+{$Region 'TRecordList' }
 
 function TRecordList.GetItemById(const AId: Integer): TRecord;
 var
@@ -181,7 +208,9 @@ begin
   result := nil;
 end;
 
-{ TCUList }
+{$Endregion}
+
+{$Region 'TCUList' }
 
 function TCUList.GetItem(const AId: Integer): TCU;
 begin
@@ -193,7 +222,9 @@ begin
   result := TCU(inherited GetItemById(AId));
 end;
 
-{ TPlintList }
+{$Endregion}
+
+{$Region 'TPlintList' }
 
 function TPlintList.GetItem(const AId: Integer): TPlint;
 begin
@@ -204,5 +235,22 @@ function TPlintList.GetItemById(const AId: Integer): TPlint;
 begin
   result := TPlint(inherited GetItemById(AId));
 end;
+
+{$Endregion}
+
+{$Region 'TPlint' }
+
+constructor TPlint.Create(aId: Integer; aCU: TCU);
+begin
+  inherited Create(aId);
+  fCU := aCU;
+end;
+
+function TPlint.Info: String;
+begin
+  result := fCU.Info + ' ' + 'Plint_' + IntToStr(Id);
+end;
+
+{$Endregion}
 
 end.

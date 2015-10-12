@@ -58,6 +58,7 @@ end;
 procedure TfrmStructure.tvComStructChange(Sender: TObject; Node: TTreeNode);
 begin
   HandleSelectedData(Node);
+  OnSelectedDataChange;
 end;
 
 procedure TfrmStructure.HandleSelectedData(LSelNode: TTreeNode);
