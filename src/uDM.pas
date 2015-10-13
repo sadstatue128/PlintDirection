@@ -15,11 +15,13 @@ type
   private
     fNodeList: TNodeList;
     fPlintDirController: TPlintDirectionController;
+    fDirectionController: TDirectionController;
   public
     property NodeList: TNodeList read fNodeList;
     procedure AddTestNodes(aNodeCount: Integer);
     procedure GetPlintListForBinding(aPlint: TPlint; aPlintList: TPlintList);
     property PlintDirController: TPlintDirectionController read fPlintDirController;
+    function CalculateDirections: TDirectionList;
   end;
 
 var
@@ -31,16 +33,28 @@ implementation
 
 {$R *.dfm}
 
+function TDM.CalculateDirections: TDirectionList;
+begin
+  //передать в DirectionController PlintDirections
+  fDirectionController.AssignPlintList(fPlintDirController.Dirs);
+  //рассчитать
+  fDirectionController.Calculate;
+  //получить результат
+  result := fDirectionController.Dirs;
+end;
+
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
   fNodeList := TNodeList.Create(true);
   fPlintDirController := TPlintDirectionController.Create;
+  fDirectionController :=  TDirectionController.Create;
 end;
 
 procedure TDM.DataModuleDestroy(Sender: TObject);
 begin
   fNodeList.Free;
   fPlintDirController.Free;
+  fDirectionController.Free;
 end;
 
 procedure TDM.AddTestNodes(aNodeCount: Integer);

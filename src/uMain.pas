@@ -24,6 +24,7 @@ type
     lblPlintDirName: TLabel;
     GrPlintDirections: TStringGrid;
     btCalc: TButton;
+    Button1: TButton;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -34,6 +35,7 @@ type
     procedure frmPlintDirection1btAddClick(Sender: TObject);
     function GetCurPlint: TPlint;
     procedure btCalcClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
@@ -275,6 +277,12 @@ begin
   finally
     LCalcDirFm.Free;
   end;
+end;
+
+procedure TfmMain.Button1Click(Sender: TObject);
+begin
+  DM.PlintDirController.Dirs.Sort;
+  FillGrPlintDirections;
 end;
 
 end.

@@ -27,6 +27,9 @@ end;
 TPlintDirectionList = class(TObjectList)
   private
     function GetItem (const AIndex: Integer): TPlintDirection;
+    procedure CopyToAndSort(aPlintDirList: TPlintDirectionList);
+    function GetMinStartUniqueIndex: Integer;
+    function GetMinEndUniqueIndex: Integer;
   public
     property Items [const AIndex: Integer]: TPlintDirection read GetItem; default;
     function Contains(aPlintDir: TPlintDirection): Boolean;
@@ -71,14 +74,18 @@ end;
 TDirectionController = class
   private
     fDirs: TDirectionList;
+    fPlintDirs: TPlintDirectionList;
   public
     constructor Create;
     destructor Destroy;
+    procedure AssignPlintList(aPlintDirs: TPlintDirectionList);
+    procedure Calculate;
+    property Dirs: TDirectionList read fDirs;
 end;
 
 implementation
 
-{ TPlintDirectionList }
+{$Region 'TPlintDirectionList' }
 
 function TPlintDirectionList.Contains(aPlintDir: TPlintDirection): Boolean;
 var
@@ -115,7 +122,64 @@ begin
   result := TPlintDirection(inherited Items[AIndex]);
 end;
 
-{ TPlintDirectionController }
+procedure TPlintDirectionList.CopyToAndSort(aPlintDirList: TPlintDirectionList);
+var
+  LCopList, LTempList: TPlintDirectionList;
+  LPlintDir: TPlintDirection;
+begin
+  CopyTo(LCopList);
+  LTempList := TPlintDirectionList.Create(false);
+  LCopList := TPlintDirectionList.Create(false);
+  try
+    Self.CopyTo(LCopList);
+
+
+    
+  finally
+    LTempList.Free;
+    LCopList.Free;
+  end;
+end;
+
+function TPlintDirectionList.GetMinStartUniqueIndex: Integer;
+var
+  LPlintDir: TPlintDirection;
+  i: Integer;
+  Min: Integer;
+begin
+  if Count = 0  then
+    Exit;
+  Min := Items[0].fStartPlint.UniqueIndex;
+  for i := 0 to Count - 1 do
+  begin
+    LPlintDir := Items[i];
+    if LPlintDir.fStartPlint.UniqueIndex < Min then
+      Min := LPlintDir.fStartPlint.UniqueIndex;
+  end;
+  result := Min;    
+end;
+
+function TPlintDirectionList.GetMinEndUniqueIndex: Integer;
+var
+  LPlintDir: TPlintDirection;
+  i: Integer;
+  Min: Integer;
+begin
+  if Count = 0  then
+    Exit;
+  Min := Items[0].fEndPlint.UniqueIndex;
+  for i := 0 to Count - 1 do
+  begin
+    LPlintDir := Items[i];
+    if LPlintDir.fEndPlint.UniqueIndex < Min then
+      Min := LPlintDir.fEndPlint.UniqueIndex;
+  end;
+  result := Min;   
+end;
+
+{$EndRegion}
+
+{$Region 'TPlintDirectionController' }
 
 constructor TPlintDirectionController.Create;
 begin
@@ -200,7 +264,9 @@ begin
   end;
 end;
 
-{ TPlintDirection }
+{$EndRegion}
+
+{$Region 'TPlintDirection' }
 
 function TPlintDirection.Contains(aPlint: TPlint): Boolean;
 begin
@@ -227,7 +293,9 @@ begin
   result := fStartPlint.Info + C_PLINT_DIR + fEndPlint.Info;
 end;
 
-{ TDirection }
+{$EndRegion}
+
+{$Region 'TDirection' }
 
 constructor TDirection.Create(aPlintDir: TPlintDirection);
 begin
@@ -297,23 +365,48 @@ begin
   end;  
 end;
 
-{ TDirectionList }
+{$EndRegion}
+
+{$Region 'TDirectionList' }
 
 function TDirectionList.GetItem(const AIndex: Integer): TDirection;
 begin
   result := TDirection(inherited Items[AIndex]);
 end;
 
-{ TDirectionController }
+{$EndRegion}
+
+{$Region 'TDirectionController' }
+
+procedure TDirectionController.AssignPlintList(aPlintDirs: TPlintDirectionList);
+begin
+  aPlintDirs.CopyTo(fPlintDirs);
+end;
+
+procedure TDirectionController.Calculate;
+var
+  LPlintDir: TPlintDirection;
+  i: Integer;
+begin
+  for i := 0 to fPlintDirs.Count - 1 do
+   begin
+     LPlintDir := fPlintDirs[i];
+     
+   end;
+end;
 
 constructor TDirectionController.Create;
 begin
   fDirs := TDirectionList.Create(true);
+  fPlintDirs := TPlintDirectionList.Create(false);
 end;
 
 destructor TDirectionController.Destroy;
 begin
   fDirs.Free;
+  fPlintDirs.Free;
 end;
+
+{$EndRegion}
 
 end.
