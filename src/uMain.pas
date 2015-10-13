@@ -29,6 +29,7 @@ type
     procedure edNodeCountKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure frmPlintDirection1btAddClick(Sender: TObject);
+    function GetCurPlint: TPlint;
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
@@ -43,6 +44,7 @@ type
     procedure FillInfo;
     procedure ClearAll;
     procedure FillPlintDir;
+    property CurPlint: TPlint read GetCurPlint;
   end;
 
 var
@@ -154,7 +156,7 @@ begin
   N := StrToIntDef(edNodeCount.Text, 0);
   if N <= 0 then
   begin
-    Application.MessageBox(PChar(Format(ERROR_NODE_COUNT, [edNodeCount.Text])), PChar(Application.Name),MB_ICONERROR);
+    Application.MessageBox(PChar(Format(ERROR_NODE_COUNT, [edNodeCount.Text])), PChar(APPLICATION_NAME),MB_ICONERROR);
     result := false;
     Exit;
   end;
@@ -204,7 +206,7 @@ var
   Lfm: TfmAddPlintDir;
   ModRes: Integer;
 begin
-  Lfm := TfmAddPlintDir.Create(Self);
+  Lfm := TfmAddPlintDir.Create(CurPlint, Self);
   try
     ModRes := Lfm.ShowModal;
     if ModRes = mrOK then
@@ -212,6 +214,13 @@ begin
   finally
     Lfm.Free;
   end;
+end;
+
+function TfmMain.GetCurPlint: TPlint;
+begin
+  result := nil;
+  if Assigned(fCurRecord)and (fCurRecord is TPlint) then
+    result := TPlint(fCurRecord);
 end;
 
 {$Endregion}

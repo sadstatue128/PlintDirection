@@ -22,6 +22,16 @@ TPlintDirectionList = class(TObjectList)
     function Contains(aPlintDir: TPlintDirection): Boolean;
 end;
 
+TPlintDirectionController = class
+  private
+    fPlintDirs: TPlintDirectionList;
+    procedure SortPlints(aStartPlint, aEndPlint: TPlint);
+  public
+    constructor Create;
+    destructor Destroy;
+    procedure AddNewPlintDir(const aStartPlint: TPlint; const aEndPlint: TPlint);
+end;
+
 implementation
 
 { TPlintDirectionList }
@@ -48,6 +58,36 @@ end;
 function TPlintDirectionList.GetItem(const AIndex: Integer): TPlintDirection;
 begin
   result := TPlintDirection(Items[AIndex]);
+end;
+
+{ TPlintDirectionController }
+
+constructor TPlintDirectionController.Create;
+begin
+  fPlintDirs := TPlintDirectionList.Create(true);
+end;
+
+destructor TPlintDirectionController.Destroy;
+begin
+  fPlintDirs.Free;
+end;
+
+procedure TPlintDirectionController.AddNewPlintDir(aStartPlint: TPlint; aEndPlint: TPlint);
+begin
+
+end;
+
+procedure TPlintDirectionController.SortPlints(aStartPlint: TPlint; aEndPlint: TPlint);
+var
+  aHelpPlint: TPlint;
+begin
+  if aEndPlint.UniqueIndex > aStartPlint.UniqueIndex then
+    Exit
+  else
+  begin
+    aHelpPlint := aStartPlint;
+    aStartPlint := 
+  end;
 end;
 
 end.

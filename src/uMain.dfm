@@ -34,7 +34,6 @@ object fmMain: TfmMain
     Height = 626
     Align = alLeft
     TabOrder = 1
-    ExplicitHeight = 758
     inline frmStructure1: TfrmStructure
       Left = 1
       Top = 1
@@ -45,12 +44,12 @@ object fmMain: TfmMain
       ExplicitLeft = 1
       ExplicitTop = 1
       ExplicitWidth = 319
-      ExplicitHeight = 756
+      ExplicitHeight = 624
       inherited tvComStruct: TTreeView
         Width = 319
         Height = 624
         ExplicitWidth = 319
-        ExplicitHeight = 756
+        ExplicitHeight = 624
       end
     end
   end
@@ -105,12 +104,14 @@ object fmMain: TfmMain
       ExplicitLeft = 1
       ExplicitTop = 1
       ExplicitWidth = 367
-      ExplicitHeight = 240
+      ExplicitHeight = 168
       inherited lblPlintDir: TLabel
         Font.Charset = RUSSIAN_CHARSET
       end
       inherited btAdd: TButton
+        Top = 32
         OnClick = frmPlintDirection1btAddClick
+        ExplicitTop = 32
       end
     end
   end

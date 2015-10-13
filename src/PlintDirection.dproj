@@ -22,6 +22,7 @@
     <DCC_DcuOutput>..\dcu\</DCC_DcuOutput>
     <DCC_ObjOutput>..\dcu\</DCC_ObjOutput>
     <DCC_HppOutput>..\dcu\</DCC_HppOutput>
+    <DCC_Optimize>False</DCC_Optimize>
   </PropertyGroup>
   <ProjectExtensions>
     <Borland.Personality>Delphi.Personality</Borland.Personality>

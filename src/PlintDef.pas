@@ -42,17 +42,23 @@ TNode = class(TRecord)
     function Info: String; override;
 end;
 
+TPlintList = class;
+
 TNodeList = class(TRecordList)
   private
-    function GetItem (const AId: Integer): TNode;
+    fAllPlints: TPlintList;
+    function GetItem (const AIndex: Integer): TNode;
     function GetItemById (const AId: Integer): TNode;
+    function GetAllPlints: TPlintList;
+    procedure SetPlintUniqueIndexes;
   public
-    property Items [const Id: Integer]: TNode read GetItemById; default;
+    constructor Create(aOwnsObjects: Boolean);
+    destructor Destroy;
+    property Items [const AIndex: Integer]: TNode read GetItem; default;
     property ItemsById [const Id: Integer]: TNode read GetItemById;
     procedure FillRandomValues(aNodeCount: Integer);
+    property AllPlints: TPlintList read GetAllPlints;
 end;
-
-TPlintList = class;
 
 TCU = class(TRecord)
   private
@@ -68,15 +74,16 @@ end;
 
 TCUList = class(TRecordList)
   private
-    function GetItem (const AId: Integer): TCU;
+    function GetItem (const AIndex: Integer): TCU;
     function GetItemById (const AId: Integer): TCU;
   public
-    property Items [const Id: Integer]: TCU read GetItemById; default;
+    property Items [const AIndex: Integer]: TCU read GetItem; default;
     property ItemsById [const Id: Integer]: TCU read GetItemById;
 end;
 
 TPlint = class(TRecord)
   private
+    fUnIndex: Integer;
     fCU: TCU;
     function GetNode: TNode;
   public
@@ -84,15 +91,17 @@ TPlint = class(TRecord)
     function Info: String; override;
     property CU: TCU read fCU;
     property Node: TNode read GetNode;
+    property UniqueIndex: Integer read fUnIndex;
 end;
 
 TPlintList = class(TRecordList)
   private
-    function GetItem (const AId: Integer): TPlint;
+    function GetItem (const AIndex: Integer): TPlint;
     function GetItemById (const AId: Integer): TPlint;
   public
-    property Items [const Id: Integer]: TPlint read GetItemById; default;
+    property Items [const AIndex: Integer]: TPlint read GetItem; default;
     property ItemsById [const Id: Integer]: TPlint read GetItemById;
+    procedure CopyTo(aPlintList: TPlintList);
 end;
 
 implementation
@@ -149,6 +158,18 @@ end;
 
 {$Region 'TNodeList' }
 
+constructor TNodeList.Create(aOwnsObjects: Boolean);
+begin
+  fAllPlints := TPlintList.Create(false);
+  inherited Create(aOwnsObjects);
+end;
+
+destructor TNodeList.Destroy;
+begin
+  fAllPlints.Free;
+  inherited;
+end;
+
 procedure TNodeList.FillRandomValues(aNodeCount: Integer);
 
 procedure FillCU(aCU: TCU);
@@ -189,16 +210,53 @@ begin
       Add(LNode);
       FillNode(LNode);
     end;
+  SetPlintUniqueIndexes;
 end;
 
-function TNodeList.GetItem(const AId: Integer): TNode;
+function TNodeList.GetItem(const AIndex: Integer): TNode;
 begin
-  result := TNode(inherited Items[AId]);
+  result := TNode(inherited Items[AIndex]);
 end;
 
 function TNodeList.GetItemById(const AId: Integer): TNode;
 begin
   result := TNode(inherited GetItemById(AId));
+end;
+
+function TNodeList.GetAllPlints: TPlintList;
+var
+  i: Integer;
+  LNode: TNode;
+  LCU: TCU;
+  LPlint: TPlint;
+  j: Integer;
+  k: Integer;
+begin
+    for i := 0 to Count - 1 do
+    begin
+      LNode := Items[i];
+      for j := 0 to LNode.fCUs.Count - 1 do
+      begin
+        LCU := LNode.fCUs[j];
+        for k := 0 to LCU.fPlints.Count - 1 do
+         begin
+           LPlint := LCU.fPlints[k];
+           fAllPlints.Add(LPlint);
+         end;
+      end;
+    end;
+   result := fAllPlints;
+end;
+
+procedure TNodeList.SetPlintUniqueIndexes;
+var
+  i: Integer;
+  LPlint: TPlint;
+begin
+  for i := 0 to AllPlints.Count - 1 do
+  begin
+    LPlint.fUnIndex := i;
+  end;    
 end;
 
 {$Endregion}
@@ -222,9 +280,9 @@ end;
 
 {$Region 'TCUList' }
 
-function TCUList.GetItem(const AId: Integer): TCU;
+function TCUList.GetItem(const AIndex: Integer): TCU;
 begin
-  result := TCU(inherited Items[AId]);
+  result := TCU(inherited Items[AIndex]);
 end;
 
 function TCUList.GetItemById(const AId: Integer): TCU;
@@ -236,9 +294,19 @@ end;
 
 {$Region 'TPlintList' }
 
-function TPlintList.GetItem(const AId: Integer): TPlint;
+procedure TPlintList.CopyTo(aPlintList: TPlintList);
+var
+  i: Integer;
 begin
-  result := TPlint(inherited Items[AId]);
+  for i := 0 to Count - 1 do
+  begin
+    aPlintList.Add(Items[i]);
+  end;
+end;
+
+function TPlintList.GetItem(const AIndex: Integer): TPlint;
+begin
+  result := TPlint(inherited Items[AIndex]);
 end;
 
 function TPlintList.GetItemById(const AId: Integer): TPlint;

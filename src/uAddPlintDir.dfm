@@ -11,6 +11,7 @@ object fmAddPlintDir: TfmAddPlintDir
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poMainFormCenter
   PixelsPerInch = 96
   TextHeight = 13
   object cbPlints: TComboBox
@@ -28,5 +29,6 @@ object fmAddPlintDir: TfmAddPlintDir
     Height = 34
     Caption = #1044#1086#1073#1072#1074#1080#1090#1100
     TabOrder = 1
+    OnClick = btAddClick
   end
 end
