@@ -23,6 +23,7 @@ type
     frmPlintDirection1: TfrmPlintDirection;
     lblPlintDirName: TLabel;
     GrPlintDirections: TStringGrid;
+    btCalc: TButton;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -32,6 +33,7 @@ type
       Shift: TShiftState);
     procedure frmPlintDirection1btAddClick(Sender: TObject);
     function GetCurPlint: TPlint;
+    procedure btCalcClick(Sender: TObject);
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
@@ -58,7 +60,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDM;
+uses uDM, uCalcDirection;
 
 
 procedure TfmMain.FormCreate(Sender: TObject);
@@ -74,9 +76,12 @@ begin
   ClearStruct;
   ClearMainCtrls;
   lblInfo.Caption := '';
+  ClearGrPlintDirections;
 end;
 
 {$Region ' нопки создани€ структуры'}
+
+
 
 procedure TfmMain.btClearAllClick(Sender: TObject);
 begin
@@ -258,5 +263,18 @@ begin
 end;
 
 {$Endregion}
+
+
+procedure TfmMain.btCalcClick(Sender: TObject);
+var
+  LCalcDirFm: TfmCalcDirection;
+begin
+  LCalcDirFm := TfmCalcDirection.Create(Self);
+  try
+    LCalcDirFm.ShowModal;
+  finally
+    LCalcDirFm.Free;
+  end;
+end;
 
 end.

@@ -40,6 +40,9 @@
     <DCCReference Include="uAddPlintDir.pas">
       <Form>fmAddPlintDir</Form>
     </DCCReference>
+    <DCCReference Include="uCalcDirection.pas">
+      <Form>fmCalcDirection</Form>
+    </DCCReference>
     <DCCReference Include="uDM.pas">
       <Form>DM</Form>
     </DCCReference>

@@ -30,6 +30,7 @@ TPlintDirectionList = class(TObjectList)
   public
     property Items [const AIndex: Integer]: TPlintDirection read GetItem; default;
     function Contains(aPlintDir: TPlintDirection): Boolean;
+    procedure CopyTo(aPlintDirs: TPlintDirectionList);
 end;
 
 TPlintDirectionController = class
@@ -43,6 +44,36 @@ TPlintDirectionController = class
     procedure GetPlintDirsFor(aPlint: TPlint; aPlintDirs: TPlintDirectionList);
     procedure GetBindedPlintsFor(aPlint: TPlint; aPlints: TPlintList);
     property Dirs: TPlintDirectionList read fPlintDirs;
+end;
+
+TDirection = class
+  private
+    fPlintDirs: TPlintDirectionList;
+    fLNodeId, fRNodeId:Integer;
+    fLCuId, fRCuId: Integer;
+    fLFirstPlintId, fLLastPlintId: Integer;
+    fRFirstPlintId, fRLastPlintId: Integer;
+    procedure AddPlintDir(aPlintDir: TPlintDirection);
+  public
+    function Info: String;
+    constructor Create(aPlintDir: TPlintDirection);
+    destructor Destroy;
+    function isOK(aPlintDir: TPlintDirection): Boolean;
+end;
+
+TDirectionList = class(TObjectList)
+  private
+    function GetItem (const AIndex: Integer): TDirection;
+  public
+    property Items [const AIndex: Integer]: TDirection read GetItem; default;
+end;
+
+TDirectionController = class
+  private
+    fDirs: TDirectionList;
+  public
+    constructor Create;
+    destructor Destroy;
 end;
 
 implementation
@@ -65,6 +96,17 @@ begin
        result := true;
        Exit;
      end;    
+  end;
+end;
+
+procedure TPlintDirectionList.CopyTo(aPlintDirs: TPlintDirectionList);
+var
+  i: Integer;
+begin
+  aPlintDirs.Clear;
+  for i := 0 to Count - 1 do
+  begin
+    aPlintDirs.Add(Items[i]);
   end;
 end;
 
@@ -183,6 +225,95 @@ end;
 function TPlintDirection.Info: String;
 begin
   result := fStartPlint.Info + C_PLINT_DIR + fEndPlint.Info;
+end;
+
+{ TDirection }
+
+constructor TDirection.Create(aPlintDir: TPlintDirection);
+begin
+  fPlintDirs := TPlintDirectionList.Create(False);
+  fPlintDirs.Add(aPlintDir);
+
+  with aPlintDir.fStartPlint do
+  begin
+    fLNodeId := Node.Id;
+    fLCuId := CU.Id;
+    fLFirstPlintId := Id;
+    fLLastPlintId := Id;
+  end;
+
+  with aPlintDir.fEndPlint do
+  begin
+    fRNodeId := Node.Id;
+    fRCuId := CU.Id;
+    fRFirstPlintId := Id;
+    fRLastPlintId := Id;
+  end;
+end;
+
+destructor TDirection.Destroy;
+begin
+  fPlintDirs.Free;
+end;
+
+function TDirection.Info: String;
+begin
+  result := Ñ_NODE + ':' + IntToStr(fLNodeId) + ' ' +  Ñ_CU + ':' + IntToStr(fLCuId) +
+   ' ['   + IntToStr(fLFirstPlintId) + ':' + IntToStr(fLLastPlintId) + '] ' +
+    Ñ_NODE + ':' + IntToStr(fRNodeId) + ' ' +  Ñ_CU + ':' + IntToStr(fRCuId) +
+   ' ['   + IntToStr(fRFirstPlintId) + ':' + IntToStr(fRLastPlintId) + '] '
+end;
+
+function TDirection.isOK(aPlintDir: TPlintDirection): Boolean;
+var
+  LisLNodeId, LisRNodeId,
+  LisLCuId, LisRCuId,
+  LisLPlintId,
+  LisRPlintId: Boolean;
+begin
+  with aPlintDir.fStartPlint do
+  begin
+    LisLNodeId := fLNodeId = Node.Id;
+    LisLCuId := fLCuId = CU.Id;
+    LisLPlintId := (Id - fLLastPlintId) = 1;
+  end;
+
+  with aPlintDir.fEndPlint do
+  begin
+    LisRNodeId := fRNodeId = Node.Id;
+    LisRCuId := fRCuId = CU.Id;
+    LisRPlintId:= (Id - fRLastPlintId) = 1;
+  end;
+
+  result := LisLNodeId and LisLCuId and LisLPlintId and LisRNodeId and LisRCuId and LisRPlintId;
+end;
+
+procedure TDirection.AddPlintDir(aPlintDir: TPlintDirection);
+begin
+  if isOK(aPlintDir) then
+  begin
+    fLLastPlintId := aPlintDir.fStartPlint.Id;
+    fRLastPlintId := aPlintDir.fEndPlint.Id;
+  end;  
+end;
+
+{ TDirectionList }
+
+function TDirectionList.GetItem(const AIndex: Integer): TDirection;
+begin
+  result := TDirection(inherited Items[AIndex]);
+end;
+
+{ TDirectionController }
+
+constructor TDirectionController.Create;
+begin
+  fDirs := TDirectionList.Create(true);
+end;
+
+destructor TDirectionController.Destroy;
+begin
+  fDirs.Free;
 end;
 
 end.

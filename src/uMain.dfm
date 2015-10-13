@@ -103,7 +103,7 @@ object fmMain: TfmMain
       TabOrder = 0
       ExplicitLeft = 1
       ExplicitTop = 1
-      ExplicitWidth = 487
+      ExplicitWidth = 375
       ExplicitHeight = 208
       inherited lblPlintDir: TLabel
         Left = 103
@@ -156,5 +156,14 @@ object fmMain: TfmMain
       FixedRows = 0
       TabOrder = 0
     end
+  end
+  object btCalc: TButton
+    Left = 551
+    Top = 584
+    Width = 75
+    Height = 25
+    Caption = #1056#1072#1089#1089#1095#1080#1090#1072#1090#1100
+    TabOrder = 6
+    OnClick = btCalcClick
   end
 end
