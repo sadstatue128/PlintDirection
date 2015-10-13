@@ -8,7 +8,7 @@ uses
   uStructure, uPlintDirection, PlintDef, DirectionDef, uAddPlintDir, Grids;
 
 const
-  ERROR_NODE_COUNT = '"%s"';
+  ERROR_NODE_COUNT = '"%s" не является положительным целым числом. Пожалуйста, введите целое число коммутаторов';
 
 type
   TfmMain = class(TForm)
@@ -25,6 +25,7 @@ type
     GrPlintDirections: TStringGrid;
     btCalc: TButton;
     btSort: TButton;
+    lblNodeCount: TLabel;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -137,7 +138,7 @@ procedure TfmMain.ClearMainCtrls;
 begin
   fEmpty := True;
   fNodeCount := 0;
-  edNodeCount.Text := 'Количество узлов...';
+  edNodeCount.Text := '';
   edNodeCount.Font.Color := clGrayText;
   edNodeCount.Enabled := true;
   btCreateNodes.Enabled := false;
