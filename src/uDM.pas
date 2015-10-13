@@ -17,11 +17,12 @@ type
     fPlintDirController: TPlintDirectionController;
     fDirectionController: TDirectionController;
   public
-    property NodeList: TNodeList read fNodeList;
+    function CalculateDirections: TDirectionList;
     procedure AddTestNodes(aNodeCount: Integer);
     procedure GetPlintListForBinding(aPlint: TPlint; aPlintList: TPlintList);
     property PlintDirController: TPlintDirectionController read fPlintDirController;
-    function CalculateDirections: TDirectionList;
+    property NodeList: TNodeList read fNodeList;
+    property DirectionController: TDirectionController read fDirectionController;
   end;
 
 var

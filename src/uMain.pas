@@ -24,7 +24,7 @@ type
     lblPlintDirName: TLabel;
     GrPlintDirections: TStringGrid;
     btCalc: TButton;
-    Button1: TButton;
+    btSort: TButton;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -35,7 +35,7 @@ type
     procedure frmPlintDirection1btAddClick(Sender: TObject);
     function GetCurPlint: TPlint;
     procedure btCalcClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btSortClick(Sender: TObject);
   private
     fEmpty: Boolean;
     fNodeCount: Integer;
@@ -50,7 +50,7 @@ type
     procedure FillInfo;
     procedure ClearAll;
     procedure FillPlintDir;
-    procedure FillGrPlintDirections;
+    procedure FillGrPlintDirections(aPlintDirs: TPlintDirectionList);
     procedure ClearGrPlintDirections;
     property CurPlint: TPlint read GetCurPlint;
   end;
@@ -223,7 +223,7 @@ begin
     if ModRes = mrOK then
     begin
       frmPlintDirection1.Refresh;
-      FillGrPlintDirections;
+      FillGrPlintDirections(DM.PlintDirController.Dirs);
     end;
   finally
     Lfm.Free;
@@ -241,17 +241,16 @@ end;
 
 {$Region 'Все плинтонаправления'}
 
-procedure  TfmMain.FillGrPlintDirections;
+procedure  TfmMain.FillGrPlintDirections(aPlintDirs: TPlintDirectionList);
 var
   i: Integer;
   LPlintDir: TPlintDirection;
 begin
   ClearGrPlintDirections;
-  GrPlintDirections.RowCount := DM.PlintDirController.Dirs.Count;
-  for i := 0 to DM.PlintDirController.Dirs.Count - 1 do
+  GrPlintDirections.RowCount := aPlintDirs.Count;
+  for i := 0 to aPlintDirs.Count - 1 do
   begin
-    LPlintDir := DM.PlintDirController.Dirs[i];
-    GrPlintDirections.Objects[0, i] := TObject(LPlintDir);
+    LPlintDir := aPlintDirs[i];
     GrPlintDirections.Cells[0, i] := LPlintDir.Info;
   end;
 end;
@@ -261,7 +260,10 @@ var
   i: Integer;
 begin
   for i := 0 to grPlintDirections.RowCount - 1 do
+  begin
     grPlintDirections.Rows[i].Clear;
+  end;
+  grPlintDirections.RowCount := 0;
 end;
 
 {$Endregion}
@@ -279,10 +281,10 @@ begin
   end;
 end;
 
-procedure TfmMain.Button1Click(Sender: TObject);
+procedure TfmMain.btSortClick(Sender: TObject);
 begin
-  DM.PlintDirController.Dirs.Sort;
-  FillGrPlintDirections;
+  DM.CalculateDirections;
+  FillGrPlintDirections(DM.DirectionController.SortedPlintDirs);  
 end;
 
 end.

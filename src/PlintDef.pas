@@ -234,6 +234,7 @@ var
   j: Integer;
   k: Integer;
 begin
+  fAllPlints.Clear;
     for i := 0 to Count - 1 do
     begin
       LNode := Items[i];

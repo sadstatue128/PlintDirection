@@ -78,6 +78,7 @@ var
 begin
   for i := 0 to grPlintDirections.RowCount - 1 do
     grPlintDirections.Rows[i].Clear;
+  grPlintDirections.RowCount := 0;
 end;
 
 end.

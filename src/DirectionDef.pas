@@ -7,6 +7,7 @@ uses Contnrs, SysUtils, PlintDef;
 const
   ERROR_DUPLICATE = 'Список плинтонаправлений уже содержит связь "%s"';
   ERROR_NO_SUCH_PLINT = 'Плинтонаправление "%s" не включает в себя плинт "%s"';
+  ERROR_NO_SUCH_PLINTDIR = 'Не существует плинтонаправления с StartUniqueIndex "%d" и EndUniqueIndex "%d"';
   C_PLINT_DIR = ' <=> ';
 
 type
@@ -27,9 +28,11 @@ end;
 TPlintDirectionList = class(TObjectList)
   private
     function GetItem (const AIndex: Integer): TPlintDirection;
-    procedure CopyToAndSort(aPlintDirList: TPlintDirectionList);
+    function GetItemByPlintIndexes (const AStartIndex, AEndIndex: Integer): TPlintDirection;
+    procedure GetItemListByStartPlinIndex (const AStartIndex: Integer; aList: TPlintDirectionList);
     function GetMinStartUniqueIndex: Integer;
     function GetMinEndUniqueIndex: Integer;
+    procedure CopyToAndSort(aPlintDirList: TPlintDirectionList);
   public
     property Items [const AIndex: Integer]: TPlintDirection read GetItem; default;
     function Contains(aPlintDir: TPlintDirection): Boolean;
@@ -75,12 +78,15 @@ TDirectionController = class
   private
     fDirs: TDirectionList;
     fPlintDirs: TPlintDirectionList;
+    fSortedPlintDirs: TPlintDirectionList;
+    procedure SearchPlintDirsFor(aDir: TDirection);
   public
     constructor Create;
     destructor Destroy;
     procedure AssignPlintList(aPlintDirs: TPlintDirectionList);
     procedure Calculate;
     property Dirs: TDirectionList read fDirs;
+    property SortedPlintDirs: TPlintDirectionList read fSortedPlintDirs;
 end;
 
 implementation
@@ -122,22 +128,66 @@ begin
   result := TPlintDirection(inherited Items[AIndex]);
 end;
 
+function TPlintDirectionList.GetItemByPlintIndexes(const AStartIndex,
+  AEndIndex: Integer): TPlintDirection;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    if (Items[i].fStartPlint.UniqueIndex = AStartIndex) and
+    (Items[i].fEndPlint.UniqueIndex = AEndIndex)
+    then
+    begin
+      result := Items[i];
+      Exit;
+    end;
+  end;
+  result := nil;
+end;
+
+procedure TPlintDirectionList.GetItemListByStartPlinIndex(
+  const AStartIndex: Integer; aList: TPlintDirectionList);
+var
+  i: Integer;
+begin
+  aList.Clear;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].fStartPlint.UniqueIndex = AStartIndex then
+      aList.Add(Items[i]);
+  end;
+end;
+
 procedure TPlintDirectionList.CopyToAndSort(aPlintDirList: TPlintDirectionList);
 var
-  LCopList, LTempList: TPlintDirectionList;
+  LCopList, LStartMinList: TPlintDirectionList;
   LPlintDir: TPlintDirection;
+  StartMin, EndMin: Integer;
 begin
-  CopyTo(LCopList);
-  LTempList := TPlintDirectionList.Create(false);
+  aPlintDirList.Clear;
   LCopList := TPlintDirectionList.Create(false);
+  LStartMinList  := TPlintDirectionList.Create(false);
+  CopyTo(LCopList);
   try
     Self.CopyTo(LCopList);
-
-
-    
+    while LCopList.Count > 0 do
+    begin
+      StartMin := LCopList.GetMinStartUniqueIndex;
+      LCopList.GetItemListByStartPlinIndex(StartMin, LStartMinList);
+      EndMin := LStartMinList.GetMinEndUniqueIndex;
+      LPlintDir := LCopList.GetItemByPlintIndexes(StartMin, EndMin);
+      if not Assigned (LPlintDir) then
+      begin
+        raise EPlintDirException.Create(Format(ERROR_NO_SUCH_PLINTDIR,[StartMin, EndMin]));
+        Exit;
+      end;
+      aPlintDirList.Add(LPlintDir);
+      LCopList.Extract(LPlintDir);
+    end;
   finally
-    LTempList.Free;
     LCopList.Free;
+    LStartMinList.Free;
   end;
 end;
 
@@ -328,6 +378,7 @@ function TDirection.Info: String;
 begin
   result := С_NODE + ':' + IntToStr(fLNodeId) + ' ' +  С_CU + ':' + IntToStr(fLCuId) +
    ' ['   + IntToStr(fLFirstPlintId) + ':' + IntToStr(fLLastPlintId) + '] ' +
+   C_PLINT_DIR + 
     С_NODE + ':' + IntToStr(fRNodeId) + ' ' +  С_CU + ':' + IntToStr(fRCuId) +
    ' ['   + IntToStr(fRFirstPlintId) + ':' + IntToStr(fRLastPlintId) + '] '
 end;
@@ -358,11 +409,9 @@ end;
 
 procedure TDirection.AddPlintDir(aPlintDir: TPlintDirection);
 begin
-  if isOK(aPlintDir) then
-  begin
-    fLLastPlintId := aPlintDir.fStartPlint.Id;
-    fRLastPlintId := aPlintDir.fEndPlint.Id;
-  end;  
+  fLLastPlintId := aPlintDir.fStartPlint.Id;
+  fRLastPlintId := aPlintDir.fEndPlint.Id;
+  fPlintDirs.Add(aPlintDir);
 end;
 
 {$EndRegion}
@@ -380,31 +429,61 @@ end;
 
 procedure TDirectionController.AssignPlintList(aPlintDirs: TPlintDirectionList);
 begin
-  aPlintDirs.CopyTo(fPlintDirs);
+  aPlintDirs.CopyToAndSort(fPlintDirs);
+  fPlintDirs.CopyTo(fSortedPlintDirs);
 end;
 
 procedure TDirectionController.Calculate;
 var
   LPlintDir: TPlintDirection;
+  LDir: TDirection;
+  i: Integer;
+begin
+  fDirs.Clear;
+  while fPlintDirs.Count > 0 do
+  begin
+    LPlintDir := fPlintDirs[0];
+    LDir := TDirection.Create(LPlintDir);
+    fDirs.Add(LDir);
+    try
+      SearchPlintDirsFor(LDir);
+    except
+      LDir.Free;
+    end;
+  end;
+end;
+
+procedure TDirectionController.SearchPlintDirsFor(aDir: TDirection);
+var
+  LPlintDir: TPlintDirection;
+  LPlintDirsToExtract: TPlintDirectionList;
   i: Integer;
 begin
   for i := 0 to fPlintDirs.Count - 1 do
-   begin
-     LPlintDir := fPlintDirs[i];
-     
-   end;
+  begin
+    LPlintDir := fPlintDirs[i];
+    if aDir.isOK(LPlintDir) then
+      aDir.AddPlintDir(LPlintDir);
+  end;
+
+  for i := 0 to aDir.fPlintDirs.Count - 1 do
+  begin
+    fPlintDirs.Extract(aDir.fPlintDirs[i]);
+  end;
 end;
 
 constructor TDirectionController.Create;
 begin
   fDirs := TDirectionList.Create(true);
   fPlintDirs := TPlintDirectionList.Create(false);
+  fSortedPlintDirs := TPlintDirectionList.Create(false);
 end;
 
 destructor TDirectionController.Destroy;
 begin
   fDirs.Free;
   fPlintDirs.Free;
+  fSortedPlintDirs.Free;
 end;
 
 {$EndRegion}

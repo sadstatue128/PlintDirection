@@ -80,6 +80,7 @@ var
   i: Integer;
   LPlint: TPlint;
 begin
+  cbPlints.Items.Clear;
   for i := 0 to fPlintList.Count - 1 do
   begin
     LPlint := fPlintList[i];
