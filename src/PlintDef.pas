@@ -102,6 +102,7 @@ TPlintList = class(TRecordList)
     property Items [const AIndex: Integer]: TPlint read GetItem; default;
     property ItemsById [const Id: Integer]: TPlint read GetItemById;
     procedure CopyTo(aPlintList: TPlintList);
+    procedure ExtractList(aPlintList: TPlintList);
 end;
 
 implementation
@@ -210,6 +211,7 @@ begin
       Add(LNode);
       FillNode(LNode);
     end;
+
   SetPlintUniqueIndexes;
 end;
 
@@ -253,8 +255,10 @@ var
   i: Integer;
   LPlint: TPlint;
 begin
-  for i := 0 to AllPlints.Count - 1 do
+  GetAllPlints;
+  for i := 0 to fAllPlints.Count - 1 do
   begin
+    LPlint := fAllPlints[i];
     LPlint.fUnIndex := i;
   end;    
 end;
@@ -301,6 +305,16 @@ begin
   for i := 0 to Count - 1 do
   begin
     aPlintList.Add(Items[i]);
+  end;
+end;
+
+procedure TPlintList.ExtractList(aPlintList: TPlintList);
+var
+  i: Integer;
+begin
+  for i := 0 to aPlintList.Count - 1 do
+  begin
+    Self.Extract(aPlintList[i]);
   end;
 end;
 

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls, ExtCtrls, ComCtrls,
-  uStructure, uPlintDirection, PlintDef, DirectionDef, uAddPlintDir;
+  uStructure, uPlintDirection, PlintDef, DirectionDef, uAddPlintDir, Grids;
 
 const
   ERROR_NODE_COUNT = '"%s"';
@@ -18,9 +18,11 @@ type
     edNodeCount: TEdit;
     btClearAll: TButton;
     pnPlintDir: TPanel;
-    Panel2: TPanel;
+    pnPlintDirs: TPanel;
     lblInfo: TLabel;
     frmPlintDirection1: TfrmPlintDirection;
+    lblPlintDirName: TLabel;
+    GrPlintDirections: TStringGrid;
     procedure btCreateNodesClick(Sender: TObject);
     procedure edNodeCountChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -44,6 +46,8 @@ type
     procedure FillInfo;
     procedure ClearAll;
     procedure FillPlintDir;
+    procedure FillGrPlintDirections;
+    procedure ClearGrPlintDirections;
     property CurPlint: TPlint read GetCurPlint;
   end;
 
@@ -210,7 +214,10 @@ begin
   try
     ModRes := Lfm.ShowModal;
     if ModRes = mrOK then
+    begin
       frmPlintDirection1.Refresh;
+      FillGrPlintDirections;
+    end;
   finally
     Lfm.Free;
   end;
@@ -224,4 +231,32 @@ begin
 end;
 
 {$Endregion}
+
+{$Region 'Все плинтонаправления'}
+
+procedure  TfmMain.FillGrPlintDirections;
+var
+  i: Integer;
+  LPlintDir: TPlintDirection;
+begin
+  ClearGrPlintDirections;
+  GrPlintDirections.RowCount := DM.PlintDirController.Dirs.Count;
+  for i := 0 to DM.PlintDirController.Dirs.Count - 1 do
+  begin
+    LPlintDir := DM.PlintDirController.Dirs[i];
+    GrPlintDirections.Objects[0, i] := TObject(LPlintDir);
+    GrPlintDirections.Cells[0, i] := LPlintDir.Info;
+  end;
+end;
+
+procedure TfmMain.ClearGrPlintDirections;
+var
+  i: Integer;
+begin
+  for i := 0 to grPlintDirections.RowCount - 1 do
+    grPlintDirections.Rows[i].Clear;
+end;
+
+{$Endregion}
+
 end.

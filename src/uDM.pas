@@ -49,13 +49,20 @@ begin
 end;
 
 procedure TDM.GetPlintListForBinding(aPlint: TPlint; aPlintList: TPlintList);
+var
+  LBindedPlints: TPlintList;
 begin
   fNodeList.AllPlints.CopyTo(aPlintList);
   //исключить aPlint
   aPlintList.Extract(aPlint);
   //исключить плинты, с которыми уже есть связь
-
-  //записать в выходное значение
+  LBindedPlints := TPlintList.Create(false);
+  try
+    PlintDirController.GetBindedPlintsFor(aPlint, LBindedPlints);
+    aPlintList.ExtractList(LBindedPlints);
+  finally
+    LBindedPlints.Free;
+  end;
   
 end;
 

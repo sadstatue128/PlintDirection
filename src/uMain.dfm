@@ -3,7 +3,7 @@ object fmMain: TfmMain
   Top = 0
   Caption = #1059#1087#1072#1082#1086#1074#1082#1072' '#1085#1072#1087#1088#1072#1074#1083#1077#1085#1080#1081
   ClientHeight = 626
-  ClientWidth = 750
+  ClientWidth = 883
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
@@ -88,40 +88,73 @@ object fmMain: TfmMain
     OnClick = btClearAllClick
   end
   object pnPlintDir: TPanel
-    Left = 344
+    Left = 368
     Top = 71
-    Width = 369
-    Height = 170
+    Width = 377
+    Height = 210
     BevelOuter = bvLowered
     TabOrder = 4
     inline frmPlintDirection1: TfrmPlintDirection
       Left = 1
       Top = 1
-      Width = 367
-      Height = 168
+      Width = 375
+      Height = 208
       Align = alClient
       TabOrder = 0
       ExplicitLeft = 1
       ExplicitTop = 1
-      ExplicitWidth = 367
-      ExplicitHeight = 168
+      ExplicitWidth = 487
+      ExplicitHeight = 208
       inherited lblPlintDir: TLabel
+        Left = 103
+        Top = 12
         Font.Charset = RUSSIAN_CHARSET
+        ExplicitLeft = 103
+        ExplicitTop = 12
+      end
+      inherited grPlintDirections: TStringGrid
+        Width = 233
+        Height = 161
+        DefaultColWidth = 200
+        ExplicitWidth = 233
+        ExplicitHeight = 161
       end
       inherited btAdd: TButton
-        Top = 32
+        Left = 281
+        Top = 150
+        Height = 43
         OnClick = frmPlintDirection1btAddClick
-        ExplicitTop = 32
+        ExplicitLeft = 281
+        ExplicitTop = 150
+        ExplicitHeight = 43
       end
     end
   end
-  object Panel2: TPanel
-    Left = 344
-    Top = 264
-    Width = 369
-    Height = 305
+  object pnPlintDirs: TPanel
+    Left = 368
+    Top = 304
+    Width = 488
+    Height = 257
     BevelOuter = bvLowered
-    Caption = 'Panel2'
     TabOrder = 5
+    object lblPlintDirName: TLabel
+      Left = 176
+      Top = 9
+      Width = 103
+      Height = 13
+      Caption = #1055#1083#1080#1085#1090#1086#1085#1072#1087#1088#1072#1074#1083#1077#1085#1080#1103
+    end
+    object GrPlintDirections: TStringGrid
+      Left = 25
+      Top = 30
+      Width = 440
+      Height = 206
+      ColCount = 1
+      DefaultColWidth = 400
+      FixedCols = 0
+      RowCount = 1
+      FixedRows = 0
+      TabOrder = 0
+    end
   end
 end

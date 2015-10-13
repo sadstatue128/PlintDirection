@@ -48,6 +48,7 @@ begin
   //отправить на добавку новой связи
   LChosenPlint := TPlint(cbPlints.Items.Objects[cbPlints.ItemIndex]);
   DM.PlintDirController.AddNewPlintDir(fPlint, LChosenPlint);
+  ModalResult := mrOK;
 end;
 
 constructor TfmAddPlintDir.Create(aPlint: TPlint; aOwner: TComponent);
@@ -66,6 +67,8 @@ end;
 
 procedure TfmAddPlintDir.FillList;
 begin
+  //очистить список
+  fPlintList.Clear;
   //заполнить лист
   DM.GetPlintListForBinding(fPlint, fPlintList);
   //заполнить комбобокс
